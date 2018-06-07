@@ -3,24 +3,7 @@ import webapp2
 import jinja2
 
 template_dir = os.path.join(os.path.dirname(__file__),'templates')
-jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir))
-
-
-hidden_html = """
-<input type="hidden" name="food" value="%s">
-"""
-
-item_html = "<li>%s</li>"
-
-shopping_list_html = """
-<br>
-<br>
-<h2>Shopping List</h2>
-<ul>
-    %s
-</ul>
-"""
-
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir),autoescape=True)
 
 class Handler(webapp2.RequestHandler):
     def write(self, *a, **kw):
@@ -35,29 +18,12 @@ class Handler(webapp2.RequestHandler):
 
 class MainPage(Handler):
     def get(self):
-        self.render('shopping_list.html',name=self.request.get("name"))
+        items=self.request.get_all("food")
+        self.render('shopping_list.html', items=items)
 
 class BuzzHandler(Handler):
     def get(self):
         self.render('fizzbuzz.html',n=int(self.request.get("n")))
 
-        #output = form_html
-        #output_hidden = ""
-
-        #items=self.request.get_all("food")
-
-
-        #if items:
-        #    output_items = ""
-        #    for item in items:
-        #        output_hidden += hidden_html % item
-        #        output_items += item_html % item
-
-        #    output_shopping = shopping_list_html % output_items
-        #    output += output_shopping
-
-        #output = output % output_hidden
-
-        #self.write(output)
 
 app = webapp2.WSGIApplication([('/', MainPage),('/fizzbuzz',BuzzHandler)],debug=True)
